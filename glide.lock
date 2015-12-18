@@ -1,6 +1,12 @@
 hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-updated: 2015-12-18T03:13:51.676634177Z
+updated: 2015-12-18T20:37:23.317823876Z
 imports:
+- name: code.google.com/p/go-uuid
+  version: 35bc42037350
+  subpackages:
+  - uuid
+- name: github.com/fsouza/go-dockerclient
+  version: ec2dd4992d673d98ea5aa2fc21d9b833111b464f
 - name: github.com/gorilla/context
   version: 1c83b3eabd45b6d76072b66b746c20815fb2872d
 - name: github.com/gorilla/mux
