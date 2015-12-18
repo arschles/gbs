@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 
 	"code.google.com/p/go-uuid/uuid"
 	"github.com/arschles/gbs/log"
@@ -54,8 +56,8 @@ func buildHandler(workdir string, dockerCl *docker.Client) http.Handler {
 
 		if err := dockerCl.AttachToContainer(docker.AttachToContainerOptions{
 			Container:    container.ID,
-			OutputStream: w,
-			ErrorStream:  w,
+			OutputStream: io.MultiWriter(w, os.Stdout),
+			ErrorStream:  io.MultiWriter(w, os.Stderr),
 			Logs:         true,
 			Stream:       true,
 			Stdout:       true,
