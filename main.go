@@ -47,22 +47,23 @@ func buildHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	script := []string{
-		fmt.Sprintf("git clone https://%s/%s/%s.git", site, org, repo),
-		fmt.Sprintf("mkdir -p /go/src/%s/%s", site, org),
-		fmt.Sprintf("mv %s /go/src/%s/%s/%s", repo, site, org, repo),
-		fmt.Sprintf("cd /go/src/%s/%s/%s", site, org, repo),
-		fmt.Sprintf("go build -o /pwd/%s", repo),
-	}
-	remainder := strings.Join(script, " && ")
 	cmd := exec.Command("docker",
 		"run",
 		"--rm",
-		"-e GO15VENDOREXPERIMENT=1",
-		"-e CGO_ENABLED=0",
-		fmt.Sprintf(`-v "%s":"/pwd"`, workdir),
+		"-e",
+		"GO15VENDOREXPERIMENT=1",
+		"-e",
+		"CGO_ENABLED=0",
+		"-e",
+		fmt.Sprintf("SITE=%s", site),
+		"-e",
+		fmt.Sprintf("ORG=%s", org),
+		"-e",
+		fmt.Sprintf("REPO=%s", repo),
+		"-v",
+		fmt.Sprintf(`%s:/pwd`, workdir),
 		"golang:1.5.2",
-		fmt.Sprintf(`sh -c '%s'`, remainder),
+		"/pwd/build.sh",
 	)
 	fmt.Println(strings.Join(cmd.Args, " "))
 	cmd.Env = os.Environ()
@@ -74,7 +75,7 @@ func buildHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("created as %s on the filesystem", repo)))
+	w.Write([]byte(fmt.Sprintf("created as %s on the filesystem\n", repo)))
 }
 
 func main() {
