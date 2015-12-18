@@ -16,3 +16,9 @@ docker-build:
 
 docker-push:
 	docker push ${IMAGE_NAME}
+
+docker-build-env:
+	make -C build-env docker-build
+
+docker-push-env:
+	make -C build-env
