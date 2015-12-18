@@ -2,23 +2,13 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/gorilla/mux"
-
-	"gopkg.in/v2/yaml"
 )
-
-const filename = "gbs.yaml"
-
-type buildFile struct {
-	Repos []string `yaml:"repos"`
-}
 
 var workdir string
 
@@ -79,17 +69,6 @@ func buildHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fb, err := ioutil.ReadFile(filename)
-	if err != nil {
-		log.Printf("ERROR reading %s (%s)\n", filename, err)
-		os.Exit(1)
-	}
-
-	var builds buildFile
-	if err := yaml.Unmarshal(fb, &builds); err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/{site}/{org}/{repo}", buildHandler).Methods("POST")
