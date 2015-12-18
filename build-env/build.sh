@@ -13,5 +13,6 @@ mkdir -p /go/src/$SITE/$ORG
 mv $REPO /go/src/$SITE/$ORG/$REPO
 cd /go/src/$SITE/$ORG/$REPO
 echo "building"
-go build -o /pwd/$REPO
+
+go build -o /$OUT_DIR/$REPO
 echo "done building $SITE/$ORG/$REPO"
