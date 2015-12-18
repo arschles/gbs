@@ -57,7 +57,7 @@ func buildHandler(w http.ResponseWriter, r *http.Request) {
 	remainder := strings.Join(script, " && ")
 	cmd := exec.Command("docker",
 		"run",
-		// "--rm",
+		"--rm",
 		"-e GO15VENDOREXPERIMENT=1",
 		"-e CGO_ENABLED=0",
 		fmt.Sprintf(`-v "%s":"/pwd"`, workdir),
