@@ -37,6 +37,7 @@ func buildHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	fmt.Printf("building %s/%s/%s\n", site, org, repo)
 	cmd := exec.Command("docker",
 		"run",
 		"--rm",
@@ -74,6 +75,8 @@ func main() {
 	r.HandleFunc("/{site}/{org}/{repo}", buildHandler).Methods("POST")
 
 	fmt.Println("listening on 8080")
-	http.ListenAndServe(":8080", r)
-
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
