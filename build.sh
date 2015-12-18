@@ -7,3 +7,4 @@ mv $REPO /go/src/$SITE/$ORG/$REPO
 cd /go/src/$SITE/$ORG/$REPO
 echo "building"
 go build -o /pwd/$REPO
+echo "done building $SITE/$ORG/$REPO"
