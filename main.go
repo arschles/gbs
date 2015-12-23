@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/arschles/gbs/handlers"
 	"github.com/arschles/gbs/log"
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/gorilla/mux"
@@ -23,7 +24,7 @@ func main() {
 		os.Exit(1)
 	}
 	r := mux.NewRouter()
-	r.Handle("/{site}/{org}/{repo}", buildHandler(cwd, dockerCl)).Methods("POST")
+	r.Handle("/{site}/{org}/{repo}", handlers.Build(cwd, dockerCl)).Methods("POST")
 
 	log.Printf("listening on port %d", port)
 	hostStr := fmt.Sprintf(":%d", port)
