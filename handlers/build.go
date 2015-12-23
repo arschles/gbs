@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -55,6 +56,8 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			httpErr(w, http.StatusInternalServerError, "error attaching container [%s]", err)
 			return
 		}
+		io.Copy(w, stdoutReader)
+		io.Copy(w, stderrReader)
 
 		log.Printf("waiting for container")
 		exitCode, err := dockerCl.WaitContainer(container.ID)
@@ -77,8 +80,8 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			httpErr(w, http.StatusInternalServerError, "error reading STDERR [%s]", err)
 			return
 		}
-		w.WriteHeader(http.StatusCreated)
-		flusher, ok := w.(http.Flusher)
+		// w.WriteHeader(http.StatusCreated)
+		// flusher, ok := w.(http.Flusher)
 		resp := &buildResp{Stdout: string(stdout), Stderr: string(stderr), ExitCode: exitCode}
 		if err := json.NewEncoder(w).Encode(resp); err != nil {
 			log.Errf("encoding JSON [%s]", err)
