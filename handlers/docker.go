@@ -39,10 +39,10 @@ func startContainer(cl *docker.Client, con *docker.Container, workdir string) er
 	})
 }
 
-func attachContainer(cl *docker.Client, con *docker.Container) (io.Reader, io.Reader, error) {
+func attachContainer(cl *docker.Client, containerID string) (io.Reader, io.Reader, error) {
 	var stdoutBuf, stderrBuf bytes.Buffer
 	opts := docker.AttachToContainerOptions{
-		Container:    con.ID,
+		Container:    containerID,
 		OutputStream: &stdoutBuf,
 		ErrorStream:  &stderrBuf,
 		Logs:         true,
