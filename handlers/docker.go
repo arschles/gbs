@@ -39,7 +39,16 @@ func startContainer(cl *docker.Client, con *docker.Container, workdir string) er
 	})
 }
 
-func attachContainer(cl *docker.Client, containerID string) (io.Reader, io.Reader, error) {
+// attachToContainer calls cl.AttachToContainer in a goroutine, and returns the following in order:
+//
+// - an io.Reader that reads stdout
+// - an io.Reader that reads stderr
+// - a channel that will be closed when the goroutine calling AttachToContainer blocks
+// - a channel that will receive if there was an error calling AttachToContainer
+//
+// exactly one of the two channels will receive, so you can select on them
+func attachContainer(cl *docker.Client, containerID string) (io.Reader, io.Reader, <-chan struct{}, <-chan error) {
+	doneCh, errCh := make(chan struct{}), make(chan error)
 	var stdoutBuf, stderrBuf bytes.Buffer
 	opts := docker.AttachToContainerOptions{
 		Container:    containerID,
@@ -50,9 +59,14 @@ func attachContainer(cl *docker.Client, containerID string) (io.Reader, io.Reade
 		Stdout:       true,
 		Stderr:       true,
 	}
-	if err := cl.AttachToContainer(opts); err != nil {
-		return nil, nil, err
-	}
 
-	return &stdoutBuf, &stderrBuf, nil
+	go func() {
+		if err := cl.AttachToContainer(opts); err != nil {
+			errCh <- err
+			return
+		}
+		close(doneCh)
+	}()
+
+	return &stdoutBuf, &stderrBuf, doneCh, errCh
 }

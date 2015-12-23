@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/arschles/gbs/log"
@@ -23,16 +22,16 @@ func BuildStatus(dockerCl *docker.Client) http.Handler {
 			return
 		}
 
-		stdoutReader, stderrReader, err := attachContainer(dockerCl, containerID)
-		if err != nil {
-			log.Errf("attaching container [%s]", err)
-			httpErrf(w, http.StatusInternalServerError, "error attaching container [%s]", err)
-			return
+		stdoutReader, stderrReader, doneCh, errCh := attachContainer(dockerCl, containerID)
+
+		go streamReader(stdoutReader, w, httpFlushWriter)
+		go streamReader(stderrReader, w, httpFlushWriter)
+
+		select {
+		case <-doneCh:
+		case err := <-errCh:
+			log.Errf("error attaching to container [%s]", err)
 		}
-		go func() {
-			io.Copy(w, stdoutReader)
-			io.Copy(w, stderrReader)
-		}()
 
 		exitCode, err := dockerCl.WaitContainer(containerID)
 		if err != nil {
