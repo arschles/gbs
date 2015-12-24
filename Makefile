@@ -3,7 +3,7 @@ VERSION ?= 0.0.1
 DOCKER_HOST ?= ${DOCKER_HOST}
 
 bootstrap:
-	${DOCKER_CMD} glide install
+	${DOCKER_CMD} glide up
 
 build:
 	${DOCKER_CMD} go build -o gbs
