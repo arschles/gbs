@@ -1,5 +1,5 @@
 hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-updated: 2015-12-23T08:35:46.774403571-08:00
+updated: 2015-12-24T04:16:41.265564069Z
 imports:
 - name: code.google.com/p/go-uuid
   version: 35bc42037350
@@ -11,4 +11,6 @@ imports:
   version: 1c83b3eabd45b6d76072b66b746c20815fb2872d
 - name: github.com/gorilla/mux
   version: 9c068cf16d982f8bd444b8c352acbeec34c4fe5b
+- name: github.com/kelseyhightower/envconfig
+  version: 12c18e8343f6eb5fc3a9d5c8dc353e42e6bb40b9
 devImports: []

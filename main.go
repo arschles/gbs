@@ -9,9 +9,21 @@ import (
 	"github.com/arschles/gbs/log"
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/gorilla/mux"
+	"github.com/kelseyhightower/envconfig"
 )
 
+const appName = "gbs"
+
+type config struct {
+	Port int `envconfig:"port",default:8080`
+}
+
 func main() {
+	var cfg config
+	if err := envconfig.Process(appName, &cfg); err != nil {
+		log.Errf("loading config [%s]", err)
+		os.Exit(1)
+	}
 	port := 8080
 	cwd, err := os.Getwd()
 	if err != nil {
