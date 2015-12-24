@@ -1,3 +1,5 @@
 package: github.com/arschles/gbs
 import:
   - package: github.com/gorilla/mux
+  - package: github.com/fsouza/go-dockerclient
+  - package: code.google.com/p/go-uuid/uuid
