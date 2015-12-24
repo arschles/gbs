@@ -24,8 +24,7 @@ func main() {
 		os.Exit(1)
 	}
 	r := mux.NewRouter()
-	r.Handle(handlers.StartBuildURL(), handlers.StartBuild(cwd, dockerCl)).Methods("POST")
-	r.Handle(handlers.BuildStatusURL(), handlers.BuildStatus(dockerCl)).Methods("GET")
+	r.Handle(handlers.StartBuildURL(), handlers.Build(cwd, dockerCl)).Methods("POST")
 
 	log.Printf("listening on port %d", port)
 	hostStr := fmt.Sprintf(":%d", port)
