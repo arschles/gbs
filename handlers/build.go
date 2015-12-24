@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func StartBuildURL() string {
+func BuildURL() string {
 	return fmt.Sprintf("/{%s}/{%s}/{%s}", site, org, repo)
 }
 
