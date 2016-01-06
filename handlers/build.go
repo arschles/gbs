@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	defaultBuildEnv = "quay.io/arschles/gbs-env:0.0.1"
+	defaultBuildImg = "quay.io/arschles/gbs-env:0.0.1"
 )
 
 func BuildURL() string {
@@ -54,14 +54,14 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			return
 		}
 
-		buildEnv := defaultBuildEnv
+		buildImg := defaultBuildImg
 		req := new(startBuildReq)
 		if err := json.NewDecoder(r.Body).Decode(req); err == nil {
-			buildEnv = req.BuildEnv
+			buildImg = req.BuildEnv
 		}
 		defer r.Body.Close()
 
-		containerOpts := createContainerOpts(workdir, site, org, repo)
+		containerOpts := createContainerOpts(buildImg, workdir, site, org, repo)
 		container, err := dockerCl.CreateContainer(containerOpts)
 		if err != nil {
 			log.Errf("creating container [%s]", err)

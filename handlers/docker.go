@@ -9,18 +9,16 @@ import (
 )
 
 const (
-	golangImage = "golang:1.5.2"
-	pwd         = "pwd"
-	absPwd      = "/" + pwd
+	pwd    = "pwd"
+	absPwd = "/" + pwd
 )
 
-func createContainerOpts(workdir, site, org, repo string) docker.CreateContainerOptions {
+func createContainerOpts(img, workdir, site, org, repo string) docker.CreateContainerOptions {
 	return docker.CreateContainerOptions{
 		Name: fmt.Sprintf("build-%s-%s-%s-%s", site, org, repo, uuid.New()),
 		Config: &docker.Config{
 			Env:   []string{"GO15VENDOREXPERIMENT=1", "CGO_ENABLED=0", "SITE=" + site, "ORG=" + org, "REPO=" + repo},
-			Cmd:   []string{"/bin/bash", absPwd + "/build.sh"},
-			Image: golangImage,
+			Image: img,
 			Volumes: map[string]struct{}{
 				workdir: struct{}{},
 			},
