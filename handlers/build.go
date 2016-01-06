@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,8 +12,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	defaultBuildEnv = "quay.io/arschles/gbs-env:0.0.1"
+)
+
 func BuildURL() string {
 	return fmt.Sprintf("/{%s}/{%s}/{%s}", site, org, repo)
+}
+
+type startBuildReq struct {
+	BuildEnv string `json:"build_env"`
 }
 
 type startBuildResp struct {
@@ -44,6 +53,13 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			httpErrf(w, http.StatusBadRequest, "missing repo in path")
 			return
 		}
+
+		buildEnv := defaultBuildEnv
+		req := new(startBuildReq)
+		if err := json.NewDecoder(r.Body).Decode(req); err == nil {
+			buildEnv = req.BuildEnv
+		}
+		defer r.Body.Close()
 
 		containerOpts := createContainerOpts(workdir, site, org, repo)
 		container, err := dockerCl.CreateContainer(containerOpts)
