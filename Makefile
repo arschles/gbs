@@ -9,7 +9,7 @@ build:
 	${DOCKER_CMD} go build -o gbs
 
 run:
-	docker run --rm --net=host -v ${CURDIR}:/pwd -w /pwd quay.io/deis/go-dev:0.3.0 ./gbs
+	docker run --rm --net=host -v /var/run/docker.sock:/var/run/docker.sock -v ${CURDIR}:/pwd -w /pwd quay.io/deis/go-dev:0.3.0 ./gbs
 
 docker-build:
 	docker build -t ${IMAGE_NAME} .
