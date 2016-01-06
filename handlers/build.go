@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,8 +12,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	defaultBuildImg = "quay.io/arschles/gbs-env:0.0.1"
+)
+
 func BuildURL() string {
 	return fmt.Sprintf("/{%s}/{%s}/{%s}", site, org, repo)
+}
+
+type startBuildReq struct {
+	BuildEnv string `json:"build_env"`
 }
 
 type startBuildResp struct {
@@ -45,7 +54,14 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			return
 		}
 
-		containerOpts := createContainerOpts(workdir, site, org, repo)
+		buildImg := defaultBuildImg
+		req := new(startBuildReq)
+		if err := json.NewDecoder(r.Body).Decode(req); err == nil {
+			buildImg = req.BuildEnv
+		}
+		defer r.Body.Close()
+
+		containerOpts := createContainerOpts(buildImg, workdir, site, org, repo)
 		container, err := dockerCl.CreateContainer(containerOpts)
 		if err != nil {
 			log.Errf("creating container [%s]", err)
@@ -68,6 +84,7 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			}
 		}()
 
+		w.WriteHeader(http.StatusCreated)
 		go func(reader io.Reader) {
 			scanner := bufio.NewScanner(reader)
 			for scanner.Scan() {
@@ -85,5 +102,14 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			return
 		}
 		w.Write([]byte(fmt.Sprintf("exited with error code %d\n", code)))
+
+		removeOpts := docker.RemoveContainerOptions{
+			ID:            container.ID,
+			RemoveVolumes: true,
+			Force:         true,
+		}
+		if err := dockerCl.RemoveContainer(removeOpts); err != nil {
+			log.Errf("removing container %s [%s]", container.ID, err)
+		}
 	})
 }
