@@ -101,5 +101,14 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			return
 		}
 		w.Write([]byte(fmt.Sprintf("exited with error code %d\n", code)))
+
+		removeOpts := docker.RemoveContainerOptions{
+			ID:            container.ID,
+			RemoveVolumes: true,
+			Force:         true,
+		}
+		if err := dockerCl.RemoveContainer(removeOpts); err != nil {
+			log.Errf("removing container %s [%s]", container.ID, err)
+		}
 	})
 }
