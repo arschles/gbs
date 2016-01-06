@@ -21,4 +21,4 @@ docker-build-env:
 	make -C build-env docker-build
 
 docker-push-env:
-	make -C build-env
+	make -C build-env docker-push
