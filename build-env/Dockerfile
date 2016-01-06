@@ -6,4 +6,4 @@ RUN mv build.sh /bin && chmod +x /bin/build.sh
 ENV GO15VENDOREXPERIMENT=1
 ENV CGO_ENABLED=0
 
-CMD build.sh
+CMD /bin/build.sh
