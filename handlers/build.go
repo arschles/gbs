@@ -100,6 +100,7 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			log.Errf("waiting for container %s [%s]", container.ID, err)
 			return
 		}
+		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(fmt.Sprintf("exited with error code %d\n", code)))
 
 		removeOpts := docker.RemoveContainerOptions{
