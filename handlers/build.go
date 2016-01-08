@@ -57,7 +57,9 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		buildImg := defaultBuildImg
 		req := new(startBuildReq)
 		if err := json.NewDecoder(r.Body).Decode(req); err == nil {
-			buildImg = req.BuildEnv
+			if req.BuildEnv != "" {
+				buildImg = req.BuildEnv
+			}
 		}
 		defer r.Body.Close()
 
