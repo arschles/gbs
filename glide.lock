@@ -1,15 +1,16 @@
-updated: 2015-12-24T04:16:41.265564069Z
+hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+updated: 2016-01-08T13:27:26.823999321-08:00
 imports:
 - name: code.google.com/p/go-uuid
   version: 35bc42037350
   subpackages:
   - uuid
 - name: github.com/fsouza/go-dockerclient
-  version: ec2dd4992d673d98ea5aa2fc21d9b833111b464f
+  version: 175e1df973274f04e9b459a62cffc49808f1a649
 - name: github.com/gorilla/context
   version: 1c83b3eabd45b6d76072b66b746c20815fb2872d
 - name: github.com/gorilla/mux
-  version: 9c068cf16d982f8bd444b8c352acbeec34c4fe5b
+  version: 26a6070f849969ba72b72256e9f14cf519751690
 - name: github.com/kelseyhightower/envconfig
   version: 12c18e8343f6eb5fc3a9d5c8dc353e42e6bb40b9
 devImports: []
