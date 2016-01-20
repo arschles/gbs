@@ -20,15 +20,16 @@ func BuildURL() string {
 	return fmt.Sprintf("/{%s}/{%s}/{%s}", site, org, repo)
 }
 
-type startBuildReq struct {
-	BuildEnv string `json:"build_env"`
-}
-
-type startBuildResp struct {
-	StatusURL string `json:"status_url"`
-}
-
 func Build(workdir string, dockerCl *docker.Client) http.Handler {
+	type req struct {
+		BuildEnv   string `json:"build_env"`
+		CGOEnabled *bool  `json:"cgo_enabled"`
+	}
+
+	type resp struct {
+		StatusURL string `json:"status_url"`
+	}
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		flusher, ok := w.(http.Flusher)
 		if !ok {
@@ -55,7 +56,7 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		}
 
 		buildImg := defaultBuildImg
-		req := new(startBuildReq)
+		req := new(req)
 		if err := json.NewDecoder(r.Body).Decode(req); err == nil {
 			if req.BuildEnv != "" {
 				buildImg = req.BuildEnv
@@ -63,7 +64,13 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		}
 		defer r.Body.Close()
 
-		containerOpts := createContainerOpts(buildImg, workdir, site, org, repo)
+		env := []string{}
+		if req.CGOEnabled == nil || !*req.CGOEnabled {
+			env = append(env, "CGO_ENABLED=0")
+		} else {
+			env = append(env, "CGO_ENABLED=1")
+		}
+		containerOpts := createContainerOpts(buildImg, workdir, site, org, repo, env...)
 		container, err := dockerCl.CreateContainer(containerOpts)
 		if err != nil {
 			log.Errf("creating container [%s]", err)
