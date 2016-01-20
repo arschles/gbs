@@ -22,8 +22,8 @@ func BuildURL() string {
 
 func Build(workdir string, dockerCl *docker.Client) http.Handler {
 	type req struct {
-		BuildEnv   string `json:"build_env"`
-		CGOEnabled *bool  `json:"cgo_enabled"`
+		BuildImage *string `json:"build_image"`
+		CGOEnabled *bool   `json:"cgo_enabled"`
 	}
 
 	type resp struct {
@@ -56,20 +56,20 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		}
 
 		buildImg := defaultBuildImg
+		var env []string
 		req := new(req)
 		if err := json.NewDecoder(r.Body).Decode(req); err == nil {
-			if req.BuildEnv != "" {
-				buildImg = req.BuildEnv
+			if req.BuildImage != nil {
+				buildImg = *req.BuildImage
+			}
+			if req.CGOEnabled == nil || !*req.CGOEnabled {
+				env = append(env, "CGO_ENABLED=0")
+			} else {
+				env = append(env, "CGO_ENABLED=1")
 			}
 		}
 		defer r.Body.Close()
 
-		env := []string{}
-		if req.CGOEnabled == nil || !*req.CGOEnabled {
-			env = append(env, "CGO_ENABLED=0")
-		} else {
-			env = append(env, "CGO_ENABLED=1")
-		}
 		containerOpts := createContainerOpts(buildImg, workdir, site, org, repo, env...)
 		container, err := dockerCl.CreateContainer(containerOpts)
 		if err != nil {
