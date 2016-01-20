@@ -13,11 +13,12 @@ const (
 	absPwd = "/" + pwd
 )
 
-func createContainerOpts(img, workdir, site, org, repo string) docker.CreateContainerOptions {
+func createContainerOpts(img, workdir, site, org, repo string, env ...string) docker.CreateContainerOptions {
+	defaultEnv := []string{"GO15VENDOREXPERIMENT=1", "SITE=" + site, "ORG=" + org, "REPO=" + repo}
 	return docker.CreateContainerOptions{
 		Name: fmt.Sprintf("build-%s-%s-%s-%s", site, org, repo, uuid.New()),
 		Config: &docker.Config{
-			Env:   []string{"GO15VENDOREXPERIMENT=1", "CGO_ENABLED=0", "SITE=" + site, "ORG=" + org, "REPO=" + repo},
+			Env:   append(defaultEnv, env...),
 			Image: img,
 			Volumes: map[string]struct{}{
 				workdir: struct{}{},
