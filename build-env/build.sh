@@ -3,7 +3,7 @@
 CLONE_URL="https://$SITE/$ORG/$REPO.git"
 
 echo "Cloning $CLONE_URL"
-git clone $CLONE_URL
+git clone --depth=1 $CLONE_URL
 if [[ $? != 0 ]];then
   echo "Error cloning"
   exit 1
