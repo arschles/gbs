@@ -15,6 +15,9 @@ glideget:
 build:
 	${DOCKER_CMD} go build -o gbs
 
+test:
+	${DOCKER_CMD} go test
+
 run:
 	docker run --rm --net=host -v /var/run/docker.sock:/var/run/docker.sock -v ${CURDIR}:/pwd -w /pwd quay.io/deis/go-dev:0.3.0 ./gbs
 
@@ -30,5 +33,5 @@ docker-build-env:
 docker-push-env:
 	make -C build-env docker-push
 
-test:
+test-integration:
 	curl -v -XPOST ${TEST_SERVER_IP}:8080/github.com/minio/mc
