@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"code.google.com/p/go-uuid/uuid"
 	docker "github.com/fsouza/go-dockerclient"
+	"github.com/pborman/uuid"
 )
 
 const (
@@ -24,7 +24,7 @@ func createContainerOpts(img, workdir, site, org, repo string, env ...string) do
 				workdir: struct{}{},
 			},
 			Mounts: []docker.Mount{
-				docker.Mount{Name: "pwd", Source: workdir, Destination: absPwd, Mode: "rx"},
+				docker.Mount{Name: pwd, Source: workdir, Destination: absPwd, Mode: "rx"},
 			},
 		},
 		HostConfig: &docker.HostConfig{},
