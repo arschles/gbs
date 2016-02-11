@@ -1,4 +1,4 @@
-DOCKER_CMD := docker run -e GO15VENDOREXPERIMENT=1 -e CGO_ENABLED=0 --rm -v ${CURDIR}:/go/src/github.com/arschles/gbs -w /go/src/github.com/arschles/gbs quay.io/deis/go-dev:0.3.0
+DOCKER_CMD := docker run -e GO15VENDOREXPERIMENT=1 -e CGO_ENABLED=0 --rm -v ${CURDIR}:/go/src/github.com/arschles/gbs -w /go/src/github.com/arschles/gbs quay.io/deis/go-dev:0.5.0
 VERSION ?= 0.0.1
 IMAGE_NAME := quay.io/arschles/gbs:${VERSION}
 TEST_SERVER_IP ?= $(shell docker-machine ip dev)
