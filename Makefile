@@ -16,7 +16,7 @@ build:
 	${DOCKER_CMD} go build -o gbs
 
 test:
-	${DOCKER_CMD} go test
+	${DOCKER_CMD} go test -cover
 
 run:
 	docker run --rm --net=host -v /var/run/docker.sock:/var/run/docker.sock -v ${CURDIR}:/pwd -w /pwd quay.io/deis/go-dev:0.3.0 ./gbs
