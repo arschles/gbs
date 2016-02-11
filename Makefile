@@ -25,4 +25,4 @@ docker-push-env:
 	make -C build-env docker-push
 
 test:
-	curl -XPOST ${TEST_SERVER_IP}:8080/github.com/minio/mc
+	curl -v -XPOST ${TEST_SERVER_IP}:8080/github.com/minio/mc
