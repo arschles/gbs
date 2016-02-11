@@ -23,15 +23,6 @@ func BuildURL() string {
 }
 
 func Build(workdir string, dockerCl *docker.Client) http.Handler {
-	type req struct {
-		BuildImage *string `json:"build_image"`
-		CGOEnabled *bool   `json:"cgo_enabled"`
-	}
-
-	type resp struct {
-		StatusURL string `json:"status_url"`
-	}
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		flusher, ok := w.(http.Flusher)
 		if !ok {
@@ -57,18 +48,11 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 			return
 		}
 
-		buildImg := defaultBuildImg
-		var env []string
-		req := new(req)
+		req := newBuildReq()
 		if err := json.NewDecoder(r.Body).Decode(req); err == nil {
-			if req.BuildImage != nil {
-				buildImg = *req.BuildImage
-			}
-			if req.CGOEnabled == nil || !*req.CGOEnabled {
-				env = append(env, "CGO_ENABLED=0")
-			} else {
-				env = append(env, "CGO_ENABLED=1")
-			}
+			log.Errf("decoding request body [%s]", err)
+			http.Error(w, fmt.Sprintf("Error decoding request body [%s]", err), http.StatusBadRequest)
+			return
 		}
 		defer r.Body.Close()
 
@@ -94,6 +78,7 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		)
 
 		container, err := dockerCl.CreateContainer(*createContainerOpts)
+
 		if err != nil {
 			log.Errf("creating container [%s]", err)
 			httpErrf(w, http.StatusInternalServerError, "error creating container [%s]", err)

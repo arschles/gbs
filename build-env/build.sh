@@ -14,6 +14,10 @@ mv $REPO /go/src/$SITE/$ORG/$REPO
 cd /go/src/$SITE/$ORG/$REPO
 echo "Building"
 
-go build -o $BIN_NAME
-mv ./$BIN_NAME $BIN_DIR/$BIN_NAME
-echo "Done building $SITE/$ORG/$REPO (moved to $BIN_DIR/$BIN_NAME in container)"
+if [ "$CROSS_COMPILE" == "1" ]; then
+  gox -output="/$OUT_DIR/$REPO/{{.Dir}}_{{.OS}}_{{.Arch}}"
+else
+  go build -o /$OUT_DIR/$REPO
+fi
+
+echo "Done building $SITE/$ORG/$REPO (moved to $BIN_DIR/$BIN_NAME)"
