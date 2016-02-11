@@ -4,6 +4,9 @@ IMAGE_NAME := quay.io/arschles/gbs:${VERSION}
 TEST_SERVER_IP ?= $(shell docker-machine ip dev)
 
 bootstrap:
+	${DOCKER_CMD} glide install
+
+glideup:
 	${DOCKER_CMD} glide up
 
 glideget:
