@@ -6,6 +6,9 @@ TEST_SERVER_IP ?= $(shell docker-machine ip dev)
 bootstrap:
 	${DOCKER_CMD} glide up
 
+glideget:
+	${DOCKER_CMD} glide get ${PACKAGE}
+
 build:
 	${DOCKER_CMD} go build -o gbs
 
