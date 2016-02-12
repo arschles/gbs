@@ -29,3 +29,4 @@ mc
 # cross compiled binaries
 mc_*_386
 mc_*_amd64
+mc_*_arm
