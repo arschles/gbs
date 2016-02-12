@@ -72,13 +72,25 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		}
 		defer r.Body.Close()
 
+		env = append(
+			env,
+			"GO15VENDOREXPERIMENT=1",
+			"SITE="+site,
+			"ORG="+org,
+			"REPO="+repo,
+			"BIN_NAME="+repo,
+			"BIN_DIR="+containerBinDir,
+			"GOPATH="+containerGoPath,
+		)
 		createContainerOpts, hostConfig := createAndStartContainerOpts(
 			buildImg,
 			containerName(site, org, repo),
 			nil,
-			[]string{"SITE=" + site, "ORG=" + org, "REPO=" + repo, "BIN_NAME=" + repo, "BIN_DIR=" + containerBinDir, "GOPATH=" + containerGoPath},
+			env,
 			"/",
-			[]docker.Mount{docker.Mount{Name: "bin", Source: workdir, Destination: containerBinDir, Mode: "rx"}},
+			[]docker.Mount{
+				docker.Mount{Name: "bin", Source: workdir, Destination: containerBinDir, Mode: "rx"},
+			},
 		)
 
 		container, err := dockerCl.CreateContainer(*createContainerOpts)

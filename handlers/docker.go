@@ -8,10 +8,6 @@ import (
 	"github.com/pborman/uuid"
 )
 
-var (
-	defaultContainerEnv = []string{"GO15VENDOREXPERIMENT=1", "CGO_ENABLED=0"}
-)
-
 func containerName(site, org, repo string) string {
 	return fmt.Sprintf("build-%s-%s-%s-%s", site, org, repo, uuid.New())
 }
@@ -41,7 +37,7 @@ func createAndStartContainerOpts(
 	createOpts := &docker.CreateContainerOptions{
 		Name: containerName,
 		Config: &docker.Config{
-			Env:        append(defaultContainerEnv, env...),
+			Env:        env,
 			Cmd:        cmd,
 			Image:      imageName,
 			Volumes:    vols,
