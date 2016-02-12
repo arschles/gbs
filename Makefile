@@ -16,7 +16,7 @@ build:
 	${DOCKER_CMD} go build -o gbs
 
 test:
-	${DOCKER_CMD} sh -c 'go test -cover $$(glide nv)'
+	${DOCKER_CMD} sh -c 'go test $$(glide nv)'
 
 run:
 	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ${CURDIR}:/pwd -w /pwd ubuntu:14.04 ./gbs
