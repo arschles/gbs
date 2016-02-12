@@ -48,7 +48,7 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		}
 
 		req := newBuildReq()
-		if err := json.NewDecoder(r.Body).Decode(req); err == nil {
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			log.Errf("decoding request body [%s]", err)
 			http.Error(w, fmt.Sprintf("Error decoding request body [%s]", err), http.StatusBadRequest)
 			return
