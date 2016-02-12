@@ -1,16 +1,16 @@
-hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-updated: 2016-01-08T13:27:26.823999321-08:00
+hash: 7a4175d11764e37865bfb0db57c94470bbe251c0d92653ee703e40b028989dc7
+updated: 2016-02-12T16:13:17.734558343Z
 imports:
-- name: code.google.com/p/go-uuid
-  version: 35bc42037350
-  subpackages:
-  - uuid
+- name: github.com/arschles/assert
+  version: 6882f85ccdc7c1822b146d1a6b0c2c48f91b5140
 - name: github.com/fsouza/go-dockerclient
-  version: 175e1df973274f04e9b459a62cffc49808f1a649
+  version: bda1048b6ed884fb71fd8da7828f4f80ed328652
 - name: github.com/gorilla/context
   version: 1c83b3eabd45b6d76072b66b746c20815fb2872d
 - name: github.com/gorilla/mux
   version: 26a6070f849969ba72b72256e9f14cf519751690
 - name: github.com/kelseyhightower/envconfig
   version: 12c18e8343f6eb5fc3a9d5c8dc353e42e6bb40b9
+- name: github.com/pborman/uuid
+  version: cd53251766d76cf1969596428dc09c7b97956eeb
 devImports: []
