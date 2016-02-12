@@ -12,12 +12,17 @@ fi
 mkdir -p /go/src/$SITE/$ORG
 mv $REPO /go/src/$SITE/$ORG/$REPO
 cd /go/src/$SITE/$ORG/$REPO
-echo "Building"
 
 if [ -e "glide.yaml" ]; then
+  echo "Fetching Glide dependencies"
   glide install
+  if [ "$?" != "0" ]; then
+    echo "Glide install failed"
+    exit $?
+  fi
 fi
 
+echo "Building"
 if [ "$CROSS_COMPILE" == "1" ]; then
   gox -output="/$BIN_DIR/gbs_cross/{{.Dir}}_{{.OS}}_{{.Arch}}"
 else
