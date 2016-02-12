@@ -13,7 +13,6 @@ import (
 )
 
 const (
-	defaultBuildImg = "quay.io/arschles/gbs-env:0.0.1"
 	containerBinDir = "/gobin"
 	containerGoPath = "/go"
 )
@@ -56,21 +55,21 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		}
 		defer r.Body.Close()
 
-		env = append(
-			env,
+		env = []string{
 			"GO15VENDOREXPERIMENT=1",
-			"SITE="+site,
-			"ORG="+org,
-			"REPO="+repo,
-			"BIN_NAME="+repo,
-			"BIN_DIR="+containerBinDir,
-			"GOPATH="+containerGoPath,
-		)
+			"SITE=" + site,
+			"ORG=" + org,
+			"REPO=" + repo,
+			"BIN_NAME=" + repo,
+			"BIN_DIR=" + containerBinDir,
+			"GOPATH=" + containerGoPath,
+		}
+
 		createContainerOpts, hostConfig := createAndStartContainerOpts(
-			buildImg,
+			req.buildImage(),
 			containerName(site, org, repo),
 			nil,
-			env,
+			append(env, req.envs()...),
 			"/",
 			[]docker.Mount{
 				docker.Mount{Name: "bin", Source: workdir, Destination: containerBinDir, Mode: "rx"},
