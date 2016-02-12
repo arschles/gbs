@@ -8,31 +8,29 @@ import (
 )
 
 const (
-	img     = "myimg"
-	workdir = "myworkdir"
-	site    = "mysite"
-	repo    = "myrepo"
-	env1    = "myenv1"
-	env2    = "myenv2"
+	testImageName     = "myimg"
+	testContainerName = "myContainer"
+	testCmd           = "mycmd"
+	testEnv1          = "myenv1"
+	testEnv2          = "myenv2"
+	testWorkDir       = "mywd"
 )
 
 func TestCreateContainerOpts(t *testing.T) {
-	opts := createContainerOpts(img, workdir, site, repo, env1, env2)
-	assert.True(t, strings.HasPrefix(opts.Name, fmt.Sprintf("build-%s-%s-%s-", site, org, repo)), "name was not valid")
-	assert.Equal(t, opts.Config.Image, img, "docker image")
-	expectedEnv := []string{
-		"GO15VENDOREXPERIMENT=1",
-		"SITE=" + site,
-		"ORG=" + org,
-		"REPO=" + repo,
-		env1,
-		env2,
+	mounts := []docker.Mount{
+		docker.Mount{Name: "mymount", Source: "mysrc", Destination: "mydest", Mode: "rx"},
 	}
+	opts, _ := createAndStartContainerOpts(
+		testImageName,
+		testContainerName,
+		[]string{testCmd},
+		[]string{testEnv1, testEnv2},
+		testWorkDir,
+		mounts,
+	)
+	assert.Equal(t, opts.Name, testContainerName, "container name")
+	assert.True(t, opts.Config != nil, "config was nil")
+	assert.Equal(t, opts.Config.Image, testImageName, "image name")
+	expectedEnv := []string{testEnv1, testEnv2}
 	assert.Equal(t, opts.Config.Env, expectedEnv, "environment variables")
-	assert.Equal(t, opts.Volumes, map[string]struct{}{workdir: struct{}{}}, "volumes")
-	assert.Equal(t, opts.Config.Mounts, []docker.Mount{
-		docker.Mount{Name: "pwd", Source: workdir, Destination: absPwd, Mode: "rx"},
-	})
-	assert.True(t, opts.HostConfig != nil, "host config was nil")
-	assert.Equal(t, *docker.HostConfig, docker.HostConfig{}, "host config")
 }
