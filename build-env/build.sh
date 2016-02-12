@@ -15,7 +15,8 @@ cd /go/src/$SITE/$ORG/$REPO
 echo "Building"
 
 if [ "$CROSS_COMPILE" == "1" ]; then
-  gox -output="/$OUT_DIR/$REPO/{{.Dir}}_{{.OS}}_{{.Arch}}"
+  mkdir /gbs_cross
+  gox -output="/$BIN_DIR/gbs_cross/{{.Dir}}_{{.OS}}_{{.Arch}}"
 else
   go build -o $BIN_NAME
   mv ./$BIN_NAME $BIN_DIR/$BIN_NAME
