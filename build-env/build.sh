@@ -14,5 +14,6 @@ mv $REPO /go/src/$SITE/$ORG/$REPO
 cd /go/src/$SITE/$ORG/$REPO
 echo "Building"
 
-go build -o /$OUT_DIR/$REPO
-echo "Done building $SITE/$ORG/$REPO"
+go build -o $BIN_NAME
+mv ./$BIN_NAME $BIN_DIR/$BIN_NAME
+echo "Done building $SITE/$ORG/$REPO (moved to $BIN_DIR/$BIN_NAME in container)"
