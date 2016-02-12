@@ -55,7 +55,7 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		}
 		defer r.Body.Close()
 
-		env = []string{
+		env := []string{
 			"GO15VENDOREXPERIMENT=1",
 			"SITE=" + site,
 			"ORG=" + org,
