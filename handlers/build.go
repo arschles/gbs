@@ -14,6 +14,8 @@ import (
 
 const (
 	defaultBuildImg = "quay.io/arschles/gbs-env:0.0.1"
+	containerBinDir = "/gobin"
+	containerGoPath = "/go"
 )
 
 func BuildURL() string {
@@ -70,15 +72,22 @@ func Build(workdir string, dockerCl *docker.Client) http.Handler {
 		}
 		defer r.Body.Close()
 
-		containerOpts := createContainerOpts(buildImg, workdir, site, org, repo, env...)
-		container, err := dockerCl.CreateContainer(containerOpts)
+		createContainerOpts, hostConfig := createAndStartContainerOpts(
+			buildImg,
+			containerName(site, org, repo),
+			nil,
+			[]string{"SITE=" + site, "ORG=" + org, "REPO=" + repo, "BIN_NAME=" + repo, "BIN_DIR=" + containerBinDir, "GOPATH=" + containerGoPath},
+			"/",
+			[]docker.Mount{docker.Mount{Name: "bin", Source: workdir, Destination: containerBinDir, Mode: "rx"}},
+		)
+
+		container, err := dockerCl.CreateContainer(*createContainerOpts)
 		if err != nil {
 			log.Errf("creating container [%s]", err)
 			httpErrf(w, http.StatusInternalServerError, "error creating container [%s]", err)
 			return
 		}
 
-		hostConfig := &docker.HostConfig{Binds: []string{fmt.Sprintf("%s:%s", workdir, absPwd)}}
 		if err := dockerCl.StartContainer(container.ID, hostConfig); err != nil {
 			log.Errf("starting container [%s]", err)
 			httpErrf(w, http.StatusInternalServerError, "error starting container [%s]", err)

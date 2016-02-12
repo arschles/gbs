@@ -8,27 +8,50 @@ import (
 	"github.com/pborman/uuid"
 )
 
-const (
-	pwd    = "pwd"
-	absPwd = "/" + pwd
+var (
+	defaultContainerEnv = []string{"GO15VENDOREXPERIMENT=1", "CGO_ENABLED=0"}
 )
 
-func createContainerOpts(img, workdir, site, org, repo string, env ...string) docker.CreateContainerOptions {
-	defaultEnv := []string{"GO15VENDOREXPERIMENT=1", "SITE=" + site, "ORG=" + org, "REPO=" + repo}
-	return docker.CreateContainerOptions{
-		Name: fmt.Sprintf("build-%s-%s-%s-%s", site, org, repo, uuid.New()),
+func containerName(site, org, repo string) string {
+	return fmt.Sprintf("build-%s-%s-%s-%s", site, org, repo, uuid.New())
+}
+
+func packageName(site, org, repo string) string {
+	return fmt.Sprintf("%s/%s/%s", site, org, repo)
+}
+
+func createAndStartContainerOpts(
+	imageName,
+	containerName string,
+	cmd []string,
+	env []string,
+	workDir string,
+	mounts []docker.Mount,
+) (*docker.CreateContainerOptions, *docker.HostConfig) {
+
+	vols := make(map[string]struct{})
+	for _, mount := range mounts {
+		vols[mount.Destination] = struct{}{}
+	}
+	binds := make([]string, len(mounts))
+	for i, mount := range mounts {
+		binds[i] = fmt.Sprintf("%s:%s", mount.Source, mount.Destination)
+	}
+
+	createOpts := &docker.CreateContainerOptions{
+		Name: containerName,
 		Config: &docker.Config{
-			Env:   append(defaultEnv, env...),
-			Image: img,
-			Volumes: map[string]struct{}{
-				workdir: struct{}{},
-			},
-			Mounts: []docker.Mount{
-				docker.Mount{Name: pwd, Source: workdir, Destination: absPwd, Mode: "rx"},
-			},
+			Env:        append(defaultContainerEnv, env...),
+			Cmd:        cmd,
+			Image:      imageName,
+			Volumes:    vols,
+			Mounts:     mounts,
+			WorkingDir: workDir,
 		},
 		HostConfig: &docker.HostConfig{},
 	}
+	hostConfig := &docker.HostConfig{Binds: binds}
+	return createOpts, hostConfig
 }
 
 // attachContainerOpts returns docker.AttachToContainerOptions with output and error streams turned on
