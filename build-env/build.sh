@@ -14,6 +14,10 @@ mv $REPO /go/src/$SITE/$ORG/$REPO
 cd /go/src/$SITE/$ORG/$REPO
 echo "Building"
 
+if [ -e "glide.yaml" ]; then
+  glide install
+fi
+
 if [ "$CROSS_COMPILE" == "1" ]; then
   gox -output="/$BIN_DIR/gbs_cross/{{.Dir}}_{{.OS}}_{{.Arch}}"
 else
