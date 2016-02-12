@@ -1,4 +1,4 @@
-FROM golang:1.5.2
+FROM quay.io/deis/go-dev:0.5.0
 
 ADD build.sh ./build.sh
 RUN mv build.sh /bin && \
