@@ -5,9 +5,9 @@ const (
 )
 
 type buildReq struct {
-	BuildImage   string `json:"build_image"`
-	CGOEnabled   bool   `json:"cgo_enabled"`
-	CrossCompile bool   `json:"cross_compile"`
+	BuildImage   string `json:"build_image,omitempty"`
+	CGOEnabled   bool   `json:"cgo_enabled,omitempty"`
+	CrossCompile bool   `json:"cross_compile,omitempty"`
 }
 
 func newBuildReq() *buildReq {
