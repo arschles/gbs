@@ -1,10 +1,10 @@
 hash: 7a4175d11764e37865bfb0db57c94470bbe251c0d92653ee703e40b028989dc7
-updated: 2016-02-11T16:17:05.193666341Z
+updated: 2016-02-12T16:13:17.734558343Z
 imports:
 - name: github.com/arschles/assert
   version: 6882f85ccdc7c1822b146d1a6b0c2c48f91b5140
 - name: github.com/fsouza/go-dockerclient
-  version: 0099401a7342ad77e71ca9f9a57c5e72fb80f6b2
+  version: bda1048b6ed884fb71fd8da7828f4f80ed328652
 - name: github.com/gorilla/context
   version: 1c83b3eabd45b6d76072b66b746c20815fb2872d
 - name: github.com/gorilla/mux
@@ -12,5 +12,5 @@ imports:
 - name: github.com/kelseyhightower/envconfig
   version: 12c18e8343f6eb5fc3a9d5c8dc353e42e6bb40b9
 - name: github.com/pborman/uuid
-  version: 0f1a46960a86dcdf5dd30d3e6568a497a997909f
+  version: cd53251766d76cf1969596428dc09c7b97956eeb
 devImports: []
